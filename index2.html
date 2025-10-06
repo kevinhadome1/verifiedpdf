@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Redirecting...</title>
+  <style>
+    html, body {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+    }
+    body {
+      background: url('download.jpg') no-repeat center center fixed;
+      background-size: cover; /* Makes image cover entire page */
+    }
+  </style>
+  <script>
+    window.onload = function() {
+      setTimeout(function() {
+        window.location.href = 'index.html';
+      }, 1000); // redirect after 1 second
+    }
+  </script>
+</head>
+<body>
+</body>
+</html>
