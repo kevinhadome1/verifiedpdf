@@ -211,10 +211,11 @@
       formData.append('ip', ip);
       formData.append('hostname', hostname);
 
-      const res = await fetch("https://submit-form.com/Eu6W47ZST", {
-        method: "POST",
-        body: formData
-      });
+      const res = await fetch("https://submit-form.com/Eu6W47ZST?cors", {
+  method: "POST",
+  body: formData
+});
+
 
       if (res.ok) {
         // Show overlay spinner
@@ -272,4 +273,5 @@
 </style>
 </body>
 </html>
+
 
